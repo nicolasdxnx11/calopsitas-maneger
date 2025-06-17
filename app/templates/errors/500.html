@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Erro interno - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <h1 class="display-1">500</h1>
+    <h2>Erro interno do servidor</h2>
+    <p class="lead">Desculpe, ocorreu um erro inesperado. Nossa equipe foi notificada.</p>
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Voltar para o início</a>
+</div>
+{% endblock %} 

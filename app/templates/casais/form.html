@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">{{ title }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.nome.label(class="form-label") }}
+                            {{ form.nome(class="form-control") }}
+                            {% if form.nome.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.nome.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.macho_id.label(class="form-label") }}
+                            {{ form.macho_id(class="form-select") }}
+                            {% if form.macho_id.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.macho_id.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.femea_id.label(class="form-label") }}
+                            {{ form.femea_id(class="form-select") }}
+                            {% if form.femea_id.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.femea_id.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.observacoes.label(class="form-label") }}
+                            {{ form.observacoes(class="form-control", rows=3) }}
+                            {% if form.observacoes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.observacoes.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('casais.index') }}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

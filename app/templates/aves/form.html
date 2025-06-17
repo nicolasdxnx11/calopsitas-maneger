@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.nome.label(class="form-label") }}
+                            {{ form.nome(class="form-control") }}
+                            {% if form.nome.errors %}
+                                {% for error in form.nome.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.sexo.label(class="form-label") }}
+                            {{ form.sexo(class="form-select") }}
+                            {% if form.sexo.errors %}
+                                {% for error in form.sexo.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.data_nascimento.label(class="form-label") }}
+                            {{ form.data_nascimento(class="form-control", type="date") }}
+                            {% if form.data_nascimento.errors %}
+                                {% for error in form.data_nascimento.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.status.label(class="form-label") }}
+                            {{ form.status(class="form-select") }}
+                            {% if form.status.errors %}
+                                {% for error in form.status.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.mutacoes.label(class="form-label") }}
+                            {{ form.mutacoes(class="form-select", multiple=True) }}
+                            {% if form.mutacoes.errors %}
+                                {% for error in form.mutacoes.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">Segure Ctrl (ou Command no Mac) para selecionar múltiplas mutações.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('aves_bp.index') }}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

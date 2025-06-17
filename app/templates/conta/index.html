@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Minha Conta - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Menu lateral -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Menu da Conta</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('main.conta') }}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-user"></i> Perfil
+                    </a>
+                    <a href="{{ url_for('main.alterar_senha') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-key"></i> Alterar Senha
+                    </a>
+                    <a href="{{ url_for('main.plantel') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-dove"></i> Meu Plantel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo principal -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Meu Perfil</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{ url_for('main.conta') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.nome.label(class="form-label") }}
+                            {{ form.nome(class="form-control") }}
+                            {% for error in form.nome.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                            {% for error in form.email.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

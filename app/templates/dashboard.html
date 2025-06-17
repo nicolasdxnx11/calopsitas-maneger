@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Dashboard</h1>
+    
+    <!-- Cards de Estatísticas -->
+    <div class="row">
+        <!-- Total de Aves -->
+        <div class="col-md-3 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Aves</h5>
+                    <h2 class="card-text">{{ stats.total_aves }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Aves Disponíveis -->
+        <div class="col-md-3 mb-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Aves Disponíveis</h5>
+                    <h2 class="card-text">{{ stats.aves_disponiveis }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Aves Reservadas -->
+        <div class="col-md-3 mb-4">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Aves Reservadas</h5>
+                    <h2 class="card-text">{{ stats.aves_reservadas }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Aves Vendidas -->
+        <div class="col-md-3 mb-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Aves Vendidas</h5>
+                    <h2 class="card-text">{{ stats.aves_vendidas }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gráficos e Tabelas -->
+    <div class="row">
+        <!-- Distribuição por Mutação -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Distribuição por Mutação</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="mutacoesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Distribuição por Sexo -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Distribuição por Sexo</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="sexoChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Últimas Requisições -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Últimas Requisições</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Ave</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in stats.ultimas_requisicoes %}
+                                <tr>
+                                    <td>{{ req.cliente }}</td>
+                                    <td>{{ req.ave }}</td>
+                                    <td>
+                                        <span class="badge {% if req.status == 'pendente' %}bg-warning{% elif req.status == 'aprovada' %}bg-success{% else %}bg-danger{% endif %}">
+                                            {{ req.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ req.data_criacao }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Mutações
+const mutacoesCtx = document.getElementById('mutacoesChart').getContext('2d');
+new Chart(mutacoesCtx, {
+    type: 'pie',
+    data: {
+        labels: {{ stats.mutacoes_labels|tojson }},
+        datasets: [{
+            data: {{ stats.mutacoes_data|tojson }},
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF'
+            ]
+        }]
+    }
+});
+
+// Gráfico de Sexo
+const sexoCtx = document.getElementById('sexoChart').getContext('2d');
+new Chart(sexoCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Macho', 'Fêmea'],
+        datasets: [{
+            data: [{{ stats.total_machos }}, {{ stats.total_femeas }}],
+            backgroundColor: ['#36A2EB', '#FF6384']
+        }]
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

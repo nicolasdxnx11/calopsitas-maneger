@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Início - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Bem-vindo ao {{ app_name }}</h1>
+            <p class="col-md-8 fs-4">Sistema de gerenciamento de calopsitas para criadores.</p>
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg">Ver Dashboard</a>
+        </div>
+    </div>
+
+    <div class="row align-items-md-stretch">
+        <div class="col-md-6">
+            <div class="h-100 p-5 text-white bg-primary rounded-3">
+                <h2>Aves</h2>
+                <p>Gerencie seu plantel de calopsitas, cadastre novas aves e acompanhe suas características.</p>
+                <a href="{{ url_for('aves_bp.index') }}" class="btn btn-outline-light">Ver Aves</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="h-100 p-5 bg-light border rounded-3">
+                <h2>Cruzamentos</h2>
+                <p>Planeje e acompanhe os cruzamentos entre suas aves, prevendo as mutações resultantes.</p>
+                <a href="{{ url_for('cruzamentos_bp.index') }}" class="btn btn-outline-secondary">Ver Cruzamentos</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

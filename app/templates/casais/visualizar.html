@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}{{ casal.nome }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="card-title mb-0">{{ casal.nome }}</h2>
+                    <div class="btn-group">
+                        <a href="{{ url_for('casais.editar', id=casal.id) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluirModal">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4>Informações do Casal</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Macho</h5>
+                            <p>
+                                <strong>Nome:</strong> {{ casal.macho.nome }}<br>
+                                <strong>Mutações:</strong><br>
+                                {% for mutacao in casal.macho.mutacoes %}
+                                - {{ mutacao.nome }}<br>
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Fêmea</h5>
+                            <p>
+                                <strong>Nome:</strong> {{ casal.femea.nome }}<br>
+                                <strong>Mutações:</strong><br>
+                                {% for mutacao in casal.femea.mutacoes %}
+                                - {{ mutacao.nome }}<br>
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h4>Ninhadas</h4>
+                    {% if casal.ninhadas.count() > 0 %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Data da Postura</th>
+                                    <th>Ovos</th>
+                                    <th>Nascidos</th>
+                                    <th>Sobreviventes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ninhada in casal.ninhadas %}
+                                <tr>
+                                    <td>{{ ninhada.data_postura.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ ninhada.quantidade_ovos }}</td>
+                                    <td>{{ ninhada.quantidade_nascidos }}</td>
+                                    <td>{{ ninhada.quantidade_sobreviventes }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Nenhuma ninhada registrada.</p>
+                    {% endif %}
+                    <a href="{{ url_for('casais.nova_ninhada', id=casal.id) }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nova Ninhada
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Probabilidades de Mutações</h3>
+                </div>
+                <div class="card-body">
+                    {% for mutacao, prob in probabilidades.items() %}
+                    <div class="mb-3">
+                        <h5>{{ mutacao }}</h5>
+                        {% if prob is mapping %}
+                        <p>
+                            Machos: {{ prob.machos }}%<br>
+                            Fêmeas: {{ prob.femeas }}%
+                        </p>
+                        {% else %}
+                        <p>Probabilidade: {{ prob }}%</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="excluirModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir o casal "{{ casal.nome }}"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form action="{{ url_for('casais.excluir', id=casal.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

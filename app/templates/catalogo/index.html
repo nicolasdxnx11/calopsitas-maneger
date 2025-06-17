@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Catálogo de Mutações</h1>
+    
+    <div class="row">
+        {% for mutacao in mutacoes %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ mutacao.nome }}</h5>
+                    <p class="card-text">
+                        <strong>Tipo de Herança:</strong> {{ mutacao.tipo_heranca }}<br>
+                        <strong>Descrição:</strong> {{ mutacao.descricao }}<br>
+                        <strong>Cor Resultante:</strong> {{ mutacao.cor_resultante }}<br>
+                        <strong>Gene:</strong> {{ mutacao.gene }}<br>
+                        <strong>Símbolo:</strong> {{ mutacao.simbolo }}<br>
+                        <strong>Alelos:</strong> {{ mutacao.alelo_dominante }}/{{ mutacao.alelo_recessivo }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 
+{% endblock %} 

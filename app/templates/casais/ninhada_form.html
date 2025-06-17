@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Ninhada - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Nova Ninhada - {{ casal.nome }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.data_postura.label(class="form-label") }}
+                            {{ form.data_postura(class="form-control", type="date") }}
+                            {% if form.data_postura.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.data_postura.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.quantidade_ovos.label(class="form-label") }}
+                            {{ form.quantidade_ovos(class="form-control", type="number", min="1", max="8") }}
+                            {% if form.quantidade_ovos.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.quantidade_ovos.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.observacoes.label(class="form-label") }}
+                            {{ form.observacoes(class="form-control", rows=3) }}
+                            {% if form.observacoes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.observacoes.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('casais.visualizar', id=casal.id) }}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
