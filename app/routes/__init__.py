@@ -75,7 +75,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         usuario = Usuario.query.filter_by(email=form.email.data).first()
-        if usuario and check_password_hash(usuario.senha, form.senha.data):
+        if usuario and check_password_hash(usuario.senha_hash, form.senha.data):
             login_user(usuario, remember=form.lembrar.data)
             next_page = request.args.get('next')
             return redirect(next_page or url_for('main.dashboard'))
@@ -98,7 +98,7 @@ def register():
         usuario = Usuario(
             nome=form.nome.data,
             email=form.email.data,
-            senha=generate_password_hash(form.senha.data)
+            senha=form.senha.data
         )
         db.session.add(usuario)
         db.session.commit()

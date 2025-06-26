@@ -49,9 +49,9 @@
                             {% endfor %}
                         </div>
                         <div class="mb-3">
-                            {{ form.nova_senha2.label(class="form-label") }}
-                            {{ form.nova_senha2(class="form-control") }}
-                            {% for error in form.nova_senha2.errors %}
+                            {{ form.confirmar_senha.label(class="form-label") }}
+                            {{ form.confirmar_senha(class="form-control") }}
+                            {% for error in form.confirmar_senha.errors %}
                             <span class="text-danger">{{ error }}</span>
                             {% endfor %}
                         </div>

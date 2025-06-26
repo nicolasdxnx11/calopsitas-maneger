@@ -1,11 +1,13 @@
 # app/routes/auth.py  
 """Rotas de autenticação"""
-from flask import Blueprint
+from flask import Blueprint, render_template
+from app.forms import LoginForm
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login')
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
-    return "Login - Em desenvolvimento"
+    form = LoginForm()
+    return render_template('auth/login.html', form=form)
 
 # =====================================

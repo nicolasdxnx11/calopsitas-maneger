@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app import db
-from app.models import Casal, Ave, Ninhada
+from app.models import Casal, Ave, Ninhada, Plantel
 from app.forms import CasalForm, NinhadaForm
 
 casais = Blueprint('casais', __name__)
@@ -10,7 +10,15 @@ casais = Blueprint('casais', __name__)
 @login_required
 def index():
     """Lista todos os casais do usuário"""
-    casais = Casal.query.join(Ave).filter(Ave.usuario_id == current_user.id).all()
+    if not current_user.plantel:
+        plantel = Plantel(nome=f"Plantel de {current_user.nome}")
+        current_user.plantel = plantel
+        db.session.add(plantel)
+        db.session.commit()
+    casais = Casal.query \
+        .join(Ave, Casal.macho_id == Ave.id) \
+        .filter(Ave.plantel_id == current_user.plantel.id) \
+        .all()
     return render_template('casais/index.html', casais=casais)
 
 @casais.route('/casais/novo', methods=['GET', 'POST'])
