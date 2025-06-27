@@ -26,9 +26,17 @@ def index():
 def novo():
     """Cria um novo casal"""
     form = CasalForm()
-    # Filtrar apenas aves do usuário atual
-    form.macho_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(usuario_id=current_user.id, sexo='M').all()]
-    form.femea_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(usuario_id=current_user.id, sexo='F').all()]
+    
+    # Se o usuário não tem plantel, cria um
+    if not current_user.plantel:
+        plantel = Plantel(nome=f"Plantel de {current_user.nome}")
+        current_user.plantel = plantel
+        db.session.add(plantel)
+        db.session.commit()
+    
+    # Filtrar apenas aves do plantel do usuário atual
+    form.macho_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(plantel_id=current_user.plantel.id, sexo='M').all()]
+    form.femea_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(plantel_id=current_user.plantel.id, sexo='F').all()]
     
     if form.validate_on_submit():
         casal = Casal(
@@ -49,8 +57,8 @@ def novo():
 def visualizar(id):
     """Visualiza detalhes do casal e probabilidades"""
     casal = Casal.query.get_or_404(id)
-    # Verificar se o casal pertence ao usuário
-    if casal.macho.usuario_id != current_user.id or casal.femea.usuario_id != current_user.id:
+    # Verificar se o casal pertence ao plantel do usuário
+    if casal.macho.plantel_id != current_user.plantel.id or casal.femea.plantel_id != current_user.plantel.id:
         flash('Acesso negado!', 'danger')
         return redirect(url_for('casais.index'))
     
@@ -62,15 +70,15 @@ def visualizar(id):
 def editar(id):
     """Edita um casal existente"""
     casal = Casal.query.get_or_404(id)
-    # Verificar se o casal pertence ao usuário
-    if casal.macho.usuario_id != current_user.id or casal.femea.usuario_id != current_user.id:
+    # Verificar se o casal pertence ao plantel do usuário
+    if casal.macho.plantel_id != current_user.plantel.id or casal.femea.plantel_id != current_user.plantel.id:
         flash('Acesso negado!', 'danger')
         return redirect(url_for('casais.index'))
     
     form = CasalForm(obj=casal)
-    # Filtrar apenas aves do usuário atual
-    form.macho_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(usuario_id=current_user.id, sexo='M').all()]
-    form.femea_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(usuario_id=current_user.id, sexo='F').all()]
+    # Filtrar apenas aves do plantel do usuário atual
+    form.macho_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(plantel_id=current_user.plantel.id, sexo='M').all()]
+    form.femea_id.choices = [(a.id, a.nome) for a in Ave.query.filter_by(plantel_id=current_user.plantel.id, sexo='F').all()]
     
     if form.validate_on_submit():
         casal.nome = form.nome.data
@@ -89,7 +97,7 @@ def nova_ninhada(id):
     """Registra uma nova ninhada para o casal"""
     casal = Casal.query.get_or_404(id)
     # Verificar se o casal pertence ao usuário
-    if casal.macho.usuario_id != current_user.id or casal.femea.usuario_id != current_user.id:
+    if casal.macho.plantel_id != current_user.plantel.id or casal.femea.plantel_id != current_user.plantel.id:
         flash('Acesso negado!', 'danger')
         return redirect(url_for('casais.index'))
     
@@ -114,7 +122,7 @@ def excluir(id):
     """Exclui um casal"""
     casal = Casal.query.get_or_404(id)
     # Verificar se o casal pertence ao usuário
-    if casal.macho.usuario_id != current_user.id or casal.femea.usuario_id != current_user.id:
+    if casal.macho.plantel_id != current_user.plantel.id or casal.femea.plantel_id != current_user.plantel.id:
         flash('Acesso negado!', 'danger')
         return redirect(url_for('casais.index'))
     
