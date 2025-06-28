@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Simular Cruzamento - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calculator"></i> Simular Cruzamento
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="simulacaoForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="macho_id" class="form-label">
+                                        <i class="fas fa-mars"></i> Macho
+                                    </label>
+                                    <select name="macho_id" id="macho_id" class="form-select" required>
+                                        <option value="">Selecione um macho...</option>
+                                        {% for macho in machos %}
+                                            <option value="{{ macho.id }}">
+                                                {{ macho.nome }}
+                                                {% if macho.mutacoes %}
+                                                    ({% for mutacao in macho.mutacoes %}{{ mutacao.nome }}{% if not loop.last %}, {% endif %}{% endfor %})
+                                                {% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="femea_id" class="form-label">
+                                        <i class="fas fa-venus"></i> Fêmea
+                                    </label>
+                                    <select name="femea_id" id="femea_id" class="form-select" required>
+                                        <option value="">Selecione uma fêmea...</option>
+                                        {% for femea in femeas %}
+                                            <option value="{{ femea.id }}">
+                                                {{ femea.nome }}
+                                                {% if femea.mutacoes %}
+                                                    ({% for mutacao in femea.mutacoes %}{{ mutacao.nome }}{% if not loop.last %}, {% endif %}{% endfor %})
+                                                {% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calculator"></i> Calcular Probabilidades
+                            </button>
+                            <a href="{{ url_for('cruzamentos.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

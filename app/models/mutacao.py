@@ -11,7 +11,7 @@ class Mutacao(BaseModel):
     
     # Informações básicas
     nome = db.Column(db.String(50), nullable=False, unique=True)
-    tipo_heranca = db.Column(db.String(20), nullable=False)  # dominante, recessivo, ligado ao sexo
+    tipo_heranca = db.Column(db.String(30), nullable=False)  # Tipos mais específicos
     descricao = db.Column(db.Text)
     cor_resultante = db.Column(db.String(100))
     
@@ -21,13 +21,17 @@ class Mutacao(BaseModel):
     alelo_dominante = db.Column(db.String(10))  # Ex: "A"
     alelo_recessivo = db.Column(db.String(10))  # Ex: "a"
     
+    # Informações adicionais para cálculos precisos
+    viabilidade_homozigoto = db.Column(db.Boolean, default=True)  # Se é viável em homozigose
+    expressao_heterozigoto = db.Column(db.Boolean, default=True)  # Se expressa em heterozigose
+    
     # Status
     ativo = db.Column(db.Boolean, default=True)
     
     # Constraints
     __table_args__ = (
         CheckConstraint(
-            "tipo_heranca IN ('dominante', 'recessivo', 'ligado ao sexo')",
+            "tipo_heranca IN ('ligado ao sexo dominante', 'ligado ao sexo recessivo', 'autossômico dominante', 'autossômico recessivo')",
             name='check_tipo_heranca_valido'
         ),
         CheckConstraint(
@@ -67,8 +71,25 @@ class Mutacao(BaseModel):
             'gene': self.gene,
             'simbolo': self.simbolo,
             'alelo_dominante': self.alelo_dominante,
-            'alelo_recessivo': self.alelo_recessivo
+            'alelo_recessivo': self.alelo_recessivo,
+            'viabilidade_homozigoto': self.viabilidade_homozigoto,
+            'expressao_heterozigoto': self.expressao_heterozigoto
         }
+    
+    @property
+    def is_ligada_sexo(self):
+        """Verifica se é mutação ligada ao sexo"""
+        return 'ligado ao sexo' in self.tipo_heranca
+    
+    @property
+    def is_dominante(self):
+        """Verifica se é mutação dominante"""
+        return 'dominante' in self.tipo_heranca
+    
+    @property
+    def is_recessiva(self):
+        """Verifica se é mutação recessiva"""
+        return 'recessivo' in self.tipo_heranca
 
 # Tabela auxiliar para mutações compatíveis
 mutacao_compativel = db.Table('mutacao_compativel',

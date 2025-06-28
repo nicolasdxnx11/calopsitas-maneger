@@ -27,29 +27,38 @@ def index():
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    # Estatísticas básicas
+    # Verificar se o usuário tem plantel, se não, criar um
+    if not current_user.plantel:
+        from app.models import Plantel
+        plantel = Plantel(nome=f"Plantel de {current_user.nome}")
+        current_user.plantel = plantel
+        db.session.add(plantel)
+        db.session.commit()
+    
+    # Estatísticas básicas filtradas pelo plantel do usuário
+    plantel_id = current_user.plantel.id
     stats = {
-        'total_aves': Ave.query.count(),
-        'aves_disponiveis': Ave.query.filter_by(status='disponivel').count(),
-        'aves_reservadas': Ave.query.filter_by(status='reservado').count(),
-        'aves_vendidas': Ave.query.filter_by(status='vendido').count(),
-        'total_machos': Ave.query.filter_by(sexo='M').count(),
-        'total_femeas': Ave.query.filter_by(sexo='F').count()
+        'total_aves': Ave.query.filter_by(plantel_id=plantel_id).count(),
+        'aves_disponiveis': Ave.query.filter_by(plantel_id=plantel_id, status='disponivel').count(),
+        'aves_reservadas': Ave.query.filter_by(plantel_id=plantel_id, status='reservado').count(),
+        'aves_vendidas': Ave.query.filter_by(plantel_id=plantel_id, status='vendido').count(),
+        'total_machos': Ave.query.filter_by(plantel_id=plantel_id, sexo='M').count(),
+        'total_femeas': Ave.query.filter_by(plantel_id=plantel_id, sexo='F').count()
     }
     
-    # Distribuição por mutação
+    # Distribuição por mutação (filtrada pelo plantel)
     mutacoes = db.session.query(
         Mutacao.nome,
         func.count(Ave.id)
-    ).join(Ave.mutacoes).group_by(Mutacao.nome).all()
+    ).join(Ave.mutacoes).filter(Ave.plantel_id == plantel_id).group_by(Mutacao.nome).all()
     
     stats['mutacoes_labels'] = [m[0] for m in mutacoes]
     stats['mutacoes_data'] = [m[1] for m in mutacoes]
     
-    # Últimas requisições
-    stats['ultimas_requisicoes'] = Requisicao.query.order_by(
-        Requisicao.created_at.desc()
-    ).limit(5).all()
+    # Últimas requisições (filtradas pelo plantel)
+    stats['ultimas_requisicoes'] = Requisicao.query.join(Ave).filter(
+        Ave.plantel_id == plantel_id
+    ).order_by(Requisicao.created_at.desc()).limit(5).all()
     
     return render_template('dashboard.html', title='Dashboard', stats=stats)
 

@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado da Simulação - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Cabeçalho da Simulação -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-dna"></i> Simulação Genética - {{ macho.nome }} × {{ femea.nome }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0"><i class="fas fa-mars"></i> Macho: {{ macho.nome }}</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Idade:</strong> {{ macho.idade }} meses</p>
+                                    
+                                    {% if macho.mutacoes %}
+                                        <p><strong>Mutações Visíveis:</strong></p>
+                                        <ul class="list-unstyled">
+                                            {% for mutacao in macho.mutacoes %}
+                                                <li>
+                                                    <span class="badge bg-success">{{ mutacao.nome }}</span>
+                                                    <small class="text-muted">({{ mutacao.tipo_heranca }})</small>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                    
+                                    {% if macho.mutacoes_portadoras %}
+                                        <p><strong>Mutações Portadoras:</strong></p>
+                                        <ul class="list-unstyled">
+                                            {% for mutacao in macho.mutacoes_portadoras %}
+                                                <li>
+                                                    <span class="badge bg-warning">{{ mutacao.nome }}</span>
+                                                    <small class="text-muted">({{ mutacao.tipo_heranca }})</small>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                    
+                                    {% if not macho.mutacoes and not macho.mutacoes_portadoras %}
+                                        <p class="text-muted"><em>Nenhuma mutação registrada</em></p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-danger">
+                                <div class="card-header bg-danger text-white">
+                                    <h6 class="mb-0"><i class="fas fa-venus"></i> Fêmea: {{ femea.nome }}</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Idade:</strong> {{ femea.idade }} meses</p>
+                                    
+                                    {% if femea.mutacoes %}
+                                        <p><strong>Mutações Visíveis:</strong></p>
+                                        <ul class="list-unstyled">
+                                            {% for mutacao in femea.mutacoes %}
+                                                <li>
+                                                    <span class="badge bg-success">{{ mutacao.nome }}</span>
+                                                    <small class="text-muted">({{ mutacao.tipo_heranca }})</small>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                    
+                                    {% if femea.mutacoes_portadoras %}
+                                        <p><strong>Mutações Portadoras:</strong></p>
+                                        <ul class="list-unstyled">
+                                            {% for mutacao in femea.mutacoes_portadoras %}
+                                                <li>
+                                                    <span class="badge bg-warning">{{ mutacao.nome }}</span>
+                                                    <small class="text-muted">({{ mutacao.tipo_heranca }})</small>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                    
+                                    {% if not femea.mutacoes and not femea.mutacoes_portadoras %}
+                                        <p class="text-muted"><em>Nenhuma mutação registrada</em></p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo das Probabilidades -->
+    {% if relatorio %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Resumo da Simulação</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-2">
+                            <div class="border rounded p-3">
+                                <h3 class="text-primary">{{ relatorio.resumo.total_mutacoes }}</h3>
+                                <p class="mb-0">Total</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="border rounded p-3">
+                                <h3 class="text-warning">{{ relatorio.resumo.mutacoes_ligadas_sexo_dominante }}</h3>
+                                <p class="mb-0">Lig. Sexo Dom.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="border rounded p-3">
+                                <h3 class="text-info">{{ relatorio.resumo.mutacoes_ligadas_sexo_recessivo }}</h3>
+                                <p class="mb-0">Lig. Sexo Rec.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <h3 class="text-success">{{ relatorio.resumo.mutacoes_autossomicas_dominante }}</h3>
+                                <p class="mb-0">Autossômica Dom.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <h3 class="text-secondary">{{ relatorio.resumo.mutacoes_autossomicas_recessivo }}</h3>
+                                <p class="mb-0">Autossômica Rec.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Probabilidades Detalhadas -->
+    {% if probabilidades %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-percentage"></i> Probabilidades Genéticas dos Filhotes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for nome_mutacao, dados in probabilidades.items() %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100 border-primary">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-dna"></i> {{ nome_mutacao }}
+                                            <span class="badge bg-light text-dark ms-2">{{ dados.simbolo }}</span>
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <p><strong>Tipo de Herança:</strong> 
+                                                <span class="badge bg-secondary">{{ dados.tipo }}</span>
+                                            </p>
+                                            <p><strong>Gene:</strong> {{ dados.gene }}</p>
+                                            <p><strong>Cor Resultante:</strong> {{ dados.cor_resultante }}</p>
+                                            <p><strong>Descrição:</strong> {{ dados.descricao }}</p>
+                                        </div>
+                                        
+                                        <!-- Probabilidades por sexo -->
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="text-center">
+                                                    <h6 class="text-primary">
+                                                        <i class="fas fa-mars"></i> Machos
+                                                    </h6>
+                                                    {% if dados.probabilidade and dados.probabilidade.machos and dados.probabilidade.machos.expressa > 0 %}
+                                                        <div class="progress mb-2">
+                                                            <div class="progress-bar bg-success" 
+                                                                 style="width: {{ dados.probabilidade.machos.expressa }}%">
+                                                                {{ dados.probabilidade.machos.expressa }}% Expressa
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if dados.probabilidade and dados.probabilidade.machos and dados.probabilidade.machos.portador > 0 %}
+                                                        <div class="progress mb-2">
+                                                            <div class="progress-bar bg-warning" 
+                                                                 style="width: {{ dados.probabilidade.machos.portador }}%">
+                                                                {{ dados.probabilidade.machos.portador }}% Portador
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if dados.probabilidade and dados.probabilidade.machos and dados.probabilidade.machos.normal > 0 %}
+                                                        <div class="progress mb-2">
+                                                            <div class="progress-bar bg-secondary" 
+                                                                 style="width: {{ dados.probabilidade.machos.normal }}%">
+                                                                {{ dados.probabilidade.machos.normal }}% Normal
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-center">
+                                                    <h6 class="text-danger">
+                                                        <i class="fas fa-venus"></i> Fêmeas
+                                                    </h6>
+                                                    {% if dados.probabilidade and dados.probabilidade.femeas and dados.probabilidade.femeas.expressa > 0 %}
+                                                        <div class="progress mb-2">
+                                                            <div class="progress-bar bg-success" 
+                                                                 style="width: {{ dados.probabilidade.femeas.expressa }}%">
+                                                                {{ dados.probabilidade.femeas.expressa }}% Expressa
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if dados.probabilidade and dados.probabilidade.femeas and dados.probabilidade.femeas.portador > 0 %}
+                                                        <div class="progress mb-2">
+                                                            <div class="progress-bar bg-warning" 
+                                                                 style="width: {{ dados.probabilidade.femeas.portador }}%">
+                                                                {{ dados.probabilidade.femeas.portador }}% Portador
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if dados.probabilidade and dados.probabilidade.femeas and dados.probabilidade.femeas.normal > 0 %}
+                                                        <div class="progress mb-2">
+                                                            <div class="progress-bar bg-secondary" 
+                                                                 style="width: {{ dados.probabilidade.femeas.normal }}%">
+                                                                {{ dados.probabilidade.femeas.normal }}% Normal
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> 
+                                                {{ dados.probabilidade.descricao if dados.probabilidade and dados.probabilidade.descricao else 'Descrição não disponível' }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                        <h5>Nenhuma mutação encontrada</h5>
+                        <p class="text-muted">As aves selecionadas não possuem mutações registradas para simulação.</p>
+                        <p class="text-muted">Adicione mutações às aves para ver as probabilidades genéticas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Botões de Ação -->
+    <div class="row mt-4">
+        <div class="col-md-12 text-center">
+            <a href="{{ url_for('cruzamentos.simular') }}" class="btn btn-primary me-2">
+                <i class="fas fa-calculator"></i> Nova Simulação
+            </a>
+            <a href="{{ url_for('casais.novo') }}" class="btn btn-success me-2">
+                <i class="fas fa-plus"></i> Criar Casal
+            </a>
+            <a href="{{ url_for('cruzamentos.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar aos Cruzamentos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

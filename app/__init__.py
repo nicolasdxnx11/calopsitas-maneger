@@ -14,8 +14,9 @@ from flask_login import LoginManager
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'main.login'  # Corrigir para main.login
 login_manager.login_message = 'Por favor, faça login para acessar esta página.'
+login_manager.remember_cookie_duration = 365 * 24 * 60 * 60  # 1 ano
 
 def create_app(config_name='default'):
     """

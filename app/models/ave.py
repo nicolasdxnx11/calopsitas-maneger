@@ -36,8 +36,15 @@ class Ave(BaseModel):
     pai = db.relationship('Ave', foreign_keys=[pai_id], backref='filhos_pai', remote_side='Ave.id')
     mae = db.relationship('Ave', foreign_keys=[mae_id], backref='filhos_mae', remote_side='Ave.id')
     
-    # Relacionamento many-to-many com mutações
+    # Relacionamento many-to-many com mutações (mutações visíveis/expressas)
     mutacoes = db.relationship('Mutacao', secondary=ave_mutacao, backref='aves')
+    
+    # Relacionamento many-to-many com mutações portadoras (não expressas)
+    mutacoes_portadoras = db.relationship(
+        'Mutacao',
+        secondary='ave_mutacao_portadora',
+        backref='aves_portadoras'
+    )
     
     # Relacionamento com usuário (proprietário)
     proprietario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
@@ -64,6 +71,40 @@ class Ave(BaseModel):
         idade_dias = (hoje - self.data_nascimento).days
         return idade_dias // 30  # Aproximação em meses
     
+    def tem_mutacao(self, mutacao):
+        """Verifica se a ave tem uma mutação específica (visível ou portadora)"""
+        return mutacao in self.mutacoes or mutacao in self.mutacoes_portadoras
+    
+    def tem_mutacao_visivel(self, mutacao):
+        """Verifica se a ave expressa uma mutação específica"""
+        return mutacao in self.mutacoes
+    
+    def tem_mutacao_portadora(self, mutacao):
+        """Verifica se a ave é portadora de uma mutação específica"""
+        return mutacao in self.mutacoes_portadoras
+    
+    def get_genotipo_mutacao(self, mutacao):
+        """
+        Retorna o genótipo da ave para uma mutação específica
+        Returns: 'homozigoto', 'heterozigoto', 'portador', 'normal', 'desconhecido'
+        """
+        if mutacao in self.mutacoes:
+            # Se expressa a mutação
+            if mutacao.is_ligada_sexo and self.sexo == 'F':
+                # Fêmea com mutação ligada ao sexo é sempre homozigota
+                return 'homozigoto'
+            elif mutacao.is_dominante:
+                # Para dominantes, pode ser homozigoto ou heterozigoto
+                # Assumimos heterozigoto por padrão (mais comum)
+                return 'heterozigoto'
+            else:
+                # Para recessivos, se expressa é homozigoto
+                return 'homozigoto'
+        elif mutacao in self.mutacoes_portadoras:
+            return 'portador'
+        else:
+            return 'normal'
+    
     def to_dict(self):
         """Converte o objeto para dicionário"""
         return {
@@ -77,5 +118,12 @@ class Ave(BaseModel):
             'preco_negociavel': self.preco_negociavel,
             'status': self.status,
             'foto_principal': self.foto_principal,
-            'mutacoes': [m.nome for m in self.mutacoes]
+            'mutacoes': [m.nome for m in self.mutacoes],
+            'mutacoes_portadoras': [m.nome for m in self.mutacoes_portadoras]
         }
+
+# Tabela auxiliar para mutações portadoras
+ave_mutacao_portadora = db.Table('ave_mutacao_portadora',
+    db.Column('ave_id', db.Integer, db.ForeignKey('aves.id'), primary_key=True),
+    db.Column('mutacao_id', db.Integer, db.ForeignKey('mutacao.id'), primary_key=True)
+)
